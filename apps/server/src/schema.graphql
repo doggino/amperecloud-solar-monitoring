@@ -1,0 +1,21 @@
+type User @entity {
+  id: String! @id
+  name: String! @column
+  email: String! @column
+}
+
+type UserWithToken {
+  id: String!
+  name: String!
+  email: String!
+  token: String!
+}
+
+type Query {
+  profile: User
+}
+
+type Mutation {
+  signUp(email: String!, name: String!, password: String!): UserWithToken
+  signIn(email: String!, password: String!): UserWithToken
+}
