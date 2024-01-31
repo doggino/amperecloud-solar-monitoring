@@ -6,6 +6,15 @@ const config: CodegenConfig = {
   generates: {
     'apps/__generated__/graphql.ts': {
       plugins: ['typescript', 'typescript-resolvers', 'typescript-mongodb'],
+      config: {
+        contextType: 'apps/server/src/types#AmpereContext',
+        mappers: {
+          User: 'apps/server/src/models/User#IUser',
+          Facility: 'apps/server/src/models/Facility#IFacility',
+          FacilityData: 'apps/server/src/models/UploadCSV#IFacilityData',
+          UploadCSV: 'apps/server/src/models/UploadCSV#IUploadCSV',
+        },
+      },
     },
   },
 };

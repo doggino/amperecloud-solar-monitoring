@@ -4,6 +4,25 @@ type User @entity {
   email: String! @column
 }
 
+type FacilityData @entity(embedded: true) {
+  time: String! @column
+  activePower: Float! @column
+  energy: Float! @column
+}
+
+type UploadCSV @entity {
+  id: String! @id
+  fileName: String! @column
+  data: [FacilityData!] @embedded
+}
+
+type Facility @entity {
+  id: String! @id
+  name: String! @column
+  uploadCSV: UploadCSV @link
+  owner: User! @link
+}
+
 type UserWithToken {
   id: String!
   name: String!
@@ -13,9 +32,14 @@ type UserWithToken {
 
 type Query {
   profile: User
+  facilities: [Facility!]
+  facility(id: String!): Facility
 }
 
 type Mutation {
   signUp(email: String!, name: String!, password: String!): UserWithToken
   signIn(email: String!, password: String!): UserWithToken
+  createFacility(name: String!): Facility
+  updateFacility(id: String!, name: String!): Facility
+  deleteFacility(id: String!): Boolean
 }

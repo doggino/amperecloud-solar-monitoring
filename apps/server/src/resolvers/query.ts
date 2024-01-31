@@ -1,17 +1,19 @@
 import { QueryResolvers } from 'apps/__generated__/graphql';
-import { AmpereContext } from '../types';
+import { NotAuthenticatedError } from './errors';
+import Facility from '../models/Facility';
 
-const Query: QueryResolvers<AmpereContext> = {
+const Query: QueryResolvers = {
   profile: (_, args, context) => {
+    if (!context.user) return null;
+
+    return context.user;
+  },
+  facilities: async (_, args, context) => {
     if (!context.user) {
-      return null;
+      throw NotAuthenticatedError();
     }
 
-    return {
-      id: context.user._id.toString(),
-      email: context.user.email,
-      name: context.user.name,
-    };
+    return await Facility.find({ owner: context.user._id }).exec();
   },
 };
 

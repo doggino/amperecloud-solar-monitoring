@@ -1,5 +1,5 @@
 import { readFileSync } from 'fs';
-import { connect } from 'mongoose';
+import { connect, set } from 'mongoose';
 import express from 'express';
 import bodyParser from 'body-parser';
 import { ApolloServer } from '@apollo/server';
@@ -10,13 +10,14 @@ import { mongoUri, port } from './config';
 import { getUserFromToken } from './models/User';
 import { AmpereContext } from './types';
 import cors from 'cors';
+import { UserDatasource } from './datasources';
 
 const typeDefs = readFileSync('./apps/server/src/schema.graphql', {
   encoding: 'utf-8',
 });
 
 const startServer = async () => {
-  const apolloServer = new ApolloServer({
+  const apolloServer = new ApolloServer<AmpereContext>({
     typeDefs: [DIRECTIVES, typeDefs],
     resolvers,
   });
@@ -26,7 +27,10 @@ const startServer = async () => {
       const token = req.headers.authorization || '';
       const user = await getUserFromToken(token);
 
-      return { user };
+      return {
+        user,
+        userDatasource: new UserDatasource(),
+      };
     },
   });
 
@@ -41,6 +45,7 @@ const startServer = async () => {
   console.log(`🚀 Server listening at ${port}`);
 
   await connect(mongoUri);
+  set('debug', true);
 
   console.log('MongoDB Connected');
 };

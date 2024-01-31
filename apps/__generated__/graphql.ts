@@ -1,4 +1,8 @@
 import { GraphQLResolveInfo } from 'graphql';
+import { IUser } from 'apps/server/src/models/User';
+import { IFacility } from 'apps/server/src/models/Facility';
+import { IFacilityData, IUploadCSV } from 'apps/server/src/models/UploadCSV';
+import { AmpereContext } from 'apps/server/src/types';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -16,10 +20,38 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
+export type Facility = {
+  __typename?: 'Facility';
+  id: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  owner: User;
+  uploadCSV?: Maybe<UploadCsv>;
+};
+
+export type FacilityData = {
+  __typename?: 'FacilityData';
+  activePower: Scalars['Float']['output'];
+  energy: Scalars['Float']['output'];
+  time: Scalars['String']['output'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
+  createFacility?: Maybe<Facility>;
+  deleteFacility?: Maybe<Scalars['Boolean']['output']>;
   signIn?: Maybe<UserWithToken>;
   signUp?: Maybe<UserWithToken>;
+  updateFacility?: Maybe<Facility>;
+};
+
+
+export type MutationCreateFacilityArgs = {
+  name: Scalars['String']['input'];
+};
+
+
+export type MutationDeleteFacilityArgs = {
+  id: Scalars['String']['input'];
 };
 
 
@@ -35,9 +67,29 @@ export type MutationSignUpArgs = {
   password: Scalars['String']['input'];
 };
 
+
+export type MutationUpdateFacilityArgs = {
+  id: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+};
+
 export type Query = {
   __typename?: 'Query';
+  facilities?: Maybe<Array<Facility>>;
+  facility?: Maybe<Facility>;
   profile?: Maybe<User>;
+};
+
+
+export type QueryFacilityArgs = {
+  id: Scalars['String']['input'];
+};
+
+export type UploadCsv = {
+  __typename?: 'UploadCSV';
+  data?: Maybe<Array<FacilityData>>;
+  fileName: Scalars['String']['output'];
+  id: Scalars['String']['output'];
 };
 
 export type User = {
@@ -131,24 +183,32 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
-  Mutation: ResolverTypeWrapper<{}>;
+  Facility: ResolverTypeWrapper<IFacility>;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
+  FacilityData: ResolverTypeWrapper<IFacilityData>;
+  Float: ResolverTypeWrapper<Scalars['Float']['output']>;
+  Mutation: ResolverTypeWrapper<{}>;
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
   Query: ResolverTypeWrapper<{}>;
-  User: ResolverTypeWrapper<User>;
+  UploadCSV: ResolverTypeWrapper<IUploadCSV>;
+  User: ResolverTypeWrapper<IUser>;
   UserWithToken: ResolverTypeWrapper<UserWithToken>;
   AdditionalEntityFields: AdditionalEntityFields;
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
-  Mutation: {};
+  Facility: IFacility;
   String: Scalars['String']['output'];
+  FacilityData: IFacilityData;
+  Float: Scalars['Float']['output'];
+  Mutation: {};
+  Boolean: Scalars['Boolean']['output'];
   Query: {};
-  User: User;
+  UploadCSV: IUploadCSV;
+  User: IUser;
   UserWithToken: UserWithToken;
   AdditionalEntityFields: AdditionalEntityFields;
-  Boolean: Scalars['Boolean']['output'];
 };
 
 export type UnionDirectiveArgs = {
@@ -156,65 +216,92 @@ export type UnionDirectiveArgs = {
   additionalFields?: Maybe<Array<Maybe<AdditionalEntityFields>>>;
 };
 
-export type UnionDirectiveResolver<Result, Parent, ContextType = any, Args = UnionDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
+export type UnionDirectiveResolver<Result, Parent, ContextType = AmpereContext, Args = UnionDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
 
 export type AbstractEntityDirectiveArgs = {
   discriminatorField: Scalars['String']['input'];
   additionalFields?: Maybe<Array<Maybe<AdditionalEntityFields>>>;
 };
 
-export type AbstractEntityDirectiveResolver<Result, Parent, ContextType = any, Args = AbstractEntityDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
+export type AbstractEntityDirectiveResolver<Result, Parent, ContextType = AmpereContext, Args = AbstractEntityDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
 
 export type EntityDirectiveArgs = {
   embedded?: Maybe<Scalars['Boolean']['input']>;
   additionalFields?: Maybe<Array<Maybe<AdditionalEntityFields>>>;
 };
 
-export type EntityDirectiveResolver<Result, Parent, ContextType = any, Args = EntityDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
+export type EntityDirectiveResolver<Result, Parent, ContextType = AmpereContext, Args = EntityDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
 
 export type ColumnDirectiveArgs = {
   overrideType?: Maybe<Scalars['String']['input']>;
 };
 
-export type ColumnDirectiveResolver<Result, Parent, ContextType = any, Args = ColumnDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
+export type ColumnDirectiveResolver<Result, Parent, ContextType = AmpereContext, Args = ColumnDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
 
 export type IdDirectiveArgs = { };
 
-export type IdDirectiveResolver<Result, Parent, ContextType = any, Args = IdDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
+export type IdDirectiveResolver<Result, Parent, ContextType = AmpereContext, Args = IdDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
 
 export type LinkDirectiveArgs = {
   overrideType?: Maybe<Scalars['String']['input']>;
 };
 
-export type LinkDirectiveResolver<Result, Parent, ContextType = any, Args = LinkDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
+export type LinkDirectiveResolver<Result, Parent, ContextType = AmpereContext, Args = LinkDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
 
 export type EmbeddedDirectiveArgs = { };
 
-export type EmbeddedDirectiveResolver<Result, Parent, ContextType = any, Args = EmbeddedDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
+export type EmbeddedDirectiveResolver<Result, Parent, ContextType = AmpereContext, Args = EmbeddedDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
 
 export type MapDirectiveArgs = {
   path: Scalars['String']['input'];
 };
 
-export type MapDirectiveResolver<Result, Parent, ContextType = any, Args = MapDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
+export type MapDirectiveResolver<Result, Parent, ContextType = AmpereContext, Args = MapDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
 
-export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-  signIn?: Resolver<Maybe<ResolversTypes['UserWithToken']>, ParentType, ContextType, RequireFields<MutationSignInArgs, 'email' | 'password'>>;
-  signUp?: Resolver<Maybe<ResolversTypes['UserWithToken']>, ParentType, ContextType, RequireFields<MutationSignUpArgs, 'email' | 'name' | 'password'>>;
+export type FacilityResolvers<ContextType = AmpereContext, ParentType extends ResolversParentTypes['Facility'] = ResolversParentTypes['Facility']> = {
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  owner?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  uploadCSV?: Resolver<Maybe<ResolversTypes['UploadCSV']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+export type FacilityDataResolvers<ContextType = AmpereContext, ParentType extends ResolversParentTypes['FacilityData'] = ResolversParentTypes['FacilityData']> = {
+  activePower?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  energy?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  time?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type MutationResolvers<ContextType = AmpereContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  createFacility?: Resolver<Maybe<ResolversTypes['Facility']>, ParentType, ContextType, RequireFields<MutationCreateFacilityArgs, 'name'>>;
+  deleteFacility?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationDeleteFacilityArgs, 'id'>>;
+  signIn?: Resolver<Maybe<ResolversTypes['UserWithToken']>, ParentType, ContextType, RequireFields<MutationSignInArgs, 'email' | 'password'>>;
+  signUp?: Resolver<Maybe<ResolversTypes['UserWithToken']>, ParentType, ContextType, RequireFields<MutationSignUpArgs, 'email' | 'name' | 'password'>>;
+  updateFacility?: Resolver<Maybe<ResolversTypes['Facility']>, ParentType, ContextType, RequireFields<MutationUpdateFacilityArgs, 'id' | 'name'>>;
+};
+
+export type QueryResolvers<ContextType = AmpereContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  facilities?: Resolver<Maybe<Array<ResolversTypes['Facility']>>, ParentType, ContextType>;
+  facility?: Resolver<Maybe<ResolversTypes['Facility']>, ParentType, ContextType, RequireFields<QueryFacilityArgs, 'id'>>;
   profile?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
 };
 
-export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
+export type UploadCsvResolvers<ContextType = AmpereContext, ParentType extends ResolversParentTypes['UploadCSV'] = ResolversParentTypes['UploadCSV']> = {
+  data?: Resolver<Maybe<Array<ResolversTypes['FacilityData']>>, ParentType, ContextType>;
+  fileName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type UserResolvers<ContextType = AmpereContext, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type UserWithTokenResolvers<ContextType = any, ParentType extends ResolversParentTypes['UserWithToken'] = ResolversParentTypes['UserWithToken']> = {
+export type UserWithTokenResolvers<ContextType = AmpereContext, ParentType extends ResolversParentTypes['UserWithToken'] = ResolversParentTypes['UserWithToken']> = {
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -222,14 +309,17 @@ export type UserWithTokenResolvers<ContextType = any, ParentType extends Resolve
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Resolvers<ContextType = any> = {
+export type Resolvers<ContextType = AmpereContext> = {
+  Facility?: FacilityResolvers<ContextType>;
+  FacilityData?: FacilityDataResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
+  UploadCSV?: UploadCsvResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
   UserWithToken?: UserWithTokenResolvers<ContextType>;
 };
 
-export type DirectiveResolvers<ContextType = any> = {
+export type DirectiveResolvers<ContextType = AmpereContext> = {
   union?: UnionDirectiveResolver<any, any, ContextType>;
   abstractEntity?: AbstractEntityDirectiveResolver<any, any, ContextType>;
   entity?: EntityDirectiveResolver<any, any, ContextType>;
@@ -241,6 +331,25 @@ export type DirectiveResolvers<ContextType = any> = {
 };
 
 import { ObjectId } from 'mongodb';
+export type FacilityDbObject = {
+  _id: ObjectId,
+  name: string,
+  owner: UserDbObject['_id'],
+  uploadCSV?: Maybe<UploadCsvDbObject['_id']>,
+};
+
+export type FacilityDataDbObject = {
+  activePower: number,
+  energy: number,
+  time: string,
+};
+
+export type UploadCsvDbObject = {
+  data?: Maybe<Array<FacilityDataDbObject>>,
+  fileName: string,
+  _id: ObjectId,
+};
+
 export type UserDbObject = {
   email: string,
   _id: ObjectId,

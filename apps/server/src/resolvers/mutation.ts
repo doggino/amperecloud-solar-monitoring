@@ -3,6 +3,8 @@ import User from '../models/User';
 import { sign } from 'jsonwebtoken';
 import { jwtSecret } from '../config';
 import { GraphQLError } from 'graphql';
+import { NotAuthenticatedError, NotExistingError } from './errors';
+import Facility from '../models/Facility';
 
 const Mutation: MutationResolvers = {
   signUp: async (_, args) => {
@@ -42,6 +44,40 @@ const Mutation: MutationResolvers = {
     } else {
       throw Error('Email or Password is invalid');
     }
+  },
+  createFacility: async (_, args, context) => {
+    if (!context.user) {
+      throw NotAuthenticatedError();
+    }
+
+    return await Facility.create({
+      ...args,
+      owner: context.user._id,
+    });
+  },
+  updateFacility: async (_, { id, name }, context) => {
+    if (!context.user) {
+      throw NotAuthenticatedError();
+    }
+
+    const facility = await Facility.findById(id).exec();
+
+    if (!facility) {
+      throw NotExistingError();
+    }
+
+    facility.name = name;
+    await facility.save();
+
+    return facility;
+  },
+  deleteFacility: async (_, { id }, context) => {
+    if (!context.user) {
+      throw NotAuthenticatedError();
+    }
+
+    const facilityDelete = await Facility.deleteOne({ _id: id }).exec();
+    return facilityDelete.acknowledged && facilityDelete.deletedCount === 1;
   },
 };
 

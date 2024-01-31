@@ -1,10 +1,12 @@
-import { Schema, model } from 'mongoose';
-import { Maybe, UserDbObject } from 'apps/__generated__/graphql';
+import { Schema, model, Document } from 'mongoose';
+import { Maybe } from 'apps/__generated__/graphql';
 import { hashSync, compareSync } from 'bcryptjs';
 import { verify, JwtPayload } from 'jsonwebtoken';
 import { jwtSecret } from '../config';
 
-export interface IUser extends UserDbObject {
+export interface IUser extends Document {
+  name: string;
+  email: string;
   password: string;
   checkPassword(candidatePassword: string): boolean;
 }
