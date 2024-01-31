@@ -20,8 +20,6 @@ const userSchema = new Schema<IUser>({
 });
 
 userSchema.methods.checkPassword = function (candidatePassword: string) {
-  console.log('compare', candidatePassword, this.password);
-
   return compareSync(candidatePassword, this.password);
 };
 

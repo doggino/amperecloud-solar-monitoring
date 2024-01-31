@@ -9,6 +9,7 @@ import { resolvers } from './resolvers';
 import { mongoUri, port } from './config';
 import { getUserFromToken } from './models/User';
 import { AmpereContext } from './types';
+import cors from 'cors';
 
 const typeDefs = readFileSync('./apps/server/src/schema.graphql', {
   encoding: 'utf-8',
@@ -31,6 +32,7 @@ const startServer = async () => {
 
   const expressApp = express();
 
+  expressApp.use(cors());
   expressApp.use(bodyParser.json({ limit: '50mb' }));
   expressApp.use('/graphql', apolloMiddleware);
 
