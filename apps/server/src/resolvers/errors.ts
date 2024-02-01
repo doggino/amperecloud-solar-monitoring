@@ -4,9 +4,6 @@ export const NotAuthenticatedError = () =>
   new GraphQLError('User is not authenticated', {
     extensions: {
       code: 'UNAUTHENTICATED',
-      http: {
-        status: 401,
-      },
     },
   });
 

@@ -86,7 +86,7 @@ const Layout: React.FC<PropsWithChildren> = ({ children }) => {
     if (!auth && location.pathname === '/') {
       navigate('/sign-in');
     }
-  });
+  }, [auth]);
 
   return (
     <React.Fragment>
