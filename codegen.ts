@@ -5,7 +5,12 @@ const config: CodegenConfig = {
   schema: './apps/server/src/schema.graphql',
   generates: {
     'apps/__generated__/graphql.ts': {
-      plugins: ['typescript', 'typescript-resolvers', 'typescript-mongodb'],
+      plugins: [
+        'typescript',
+        './codegen-plugins/codegen-typedefs.js',
+        'typescript-resolvers',
+        'typescript-mongodb',
+      ],
       config: {
         contextType: 'apps/server/src/types#AmpereContext',
         mappers: {

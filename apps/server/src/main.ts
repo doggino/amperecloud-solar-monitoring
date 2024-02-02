@@ -1,4 +1,3 @@
-import { readFileSync } from 'fs';
 import { connect, set } from 'mongoose';
 import express from 'express';
 import bodyParser from 'body-parser';
@@ -11,14 +10,14 @@ import { getUserFromToken } from './models/User';
 import { AmpereContext } from './types';
 import cors from 'cors';
 import { UserDatasource } from './datasources';
-
-const typeDefs = readFileSync('./apps/server/src/schema.graphql', {
-  encoding: 'utf-8',
-});
+import csvMiddlewares from './middlewares/csvUpload';
+import { UploadCSVDatasource } from './datasources/UploadCSVDatasource';
+import { typeDefs } from '../../__generated__/graphql';
+import gql from 'graphql-tag';
 
 const startServer = async () => {
   const apolloServer = new ApolloServer<AmpereContext>({
-    typeDefs: [DIRECTIVES, typeDefs],
+    typeDefs: [DIRECTIVES, gql(typeDefs)],
     resolvers,
   });
   await apolloServer.start();
@@ -30,6 +29,7 @@ const startServer = async () => {
       return {
         user,
         userDatasource: new UserDatasource(),
+        uploadCSVDatasource: new UploadCSVDatasource(),
       };
     },
   });
@@ -39,6 +39,7 @@ const startServer = async () => {
   expressApp.use(cors());
   expressApp.use(bodyParser.json({ limit: '50mb' }));
   expressApp.use('/graphql', apolloMiddleware);
+  expressApp.post('/upload', ...csvMiddlewares);
 
   await new Promise<void>((resolve) => expressApp.listen(port, resolve));
 

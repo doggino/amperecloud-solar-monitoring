@@ -87,7 +87,7 @@ export type QueryFacilityArgs = {
 
 export type UploadCsv = {
   __typename?: 'UploadCSV';
-  data?: Maybe<Array<FacilityData>>;
+  data: Array<FacilityData>;
   fileName: Scalars['String']['output'];
   id: Scalars['String']['output'];
 };
@@ -112,6 +112,8 @@ export type AdditionalEntityFields = {
   type?: InputMaybe<Scalars['String']['input']>;
 };
 
+
+export const typeDefs = `schema{query:Query mutation:Mutation}directive@union(discriminatorField:String additionalFields:[AdditionalEntityFields])on UNION directive@abstractEntity(discriminatorField:String!additionalFields:[AdditionalEntityFields])on INTERFACE directive@entity(embedded:Boolean additionalFields:[AdditionalEntityFields])on OBJECT directive@column(overrideType:String)on FIELD_DEFINITION directive@id on FIELD_DEFINITION directive@link(overrideType:String)on FIELD_DEFINITION directive@embedded on FIELD_DEFINITION directive@map(path:String!)on FIELD_DEFINITION type Facility@entity{id:String!@id name:String!@column owner:User!@link uploadCSV:UploadCSV@link}type FacilityData@entity(embedded:true){activePower:Float!@column energy:Float!@column time:String!@column}type Mutation{createFacility(name:String!):Facility deleteFacility(id:String!):Boolean signIn(email:String!password:String!):UserWithToken signUp(email:String!name:String!password:String!):UserWithToken updateFacility(id:String!name:String!):Facility}type Query{facilities:[Facility!]facility(id:String!):Facility profile:User}type UploadCSV@entity{data:[FacilityData!]!@embedded fileName:String!@column id:String!@id}type User@entity{email:String!@column id:String!@id name:String!@column}type UserWithToken{email:String!id:String!name:String!token:String!}input AdditionalEntityFields{path:String type:String}`;
 
 
 export type ResolverTypeWrapper<T> = Promise<T> | T;
@@ -288,7 +290,7 @@ export type QueryResolvers<ContextType = AmpereContext, ParentType extends Resol
 };
 
 export type UploadCsvResolvers<ContextType = AmpereContext, ParentType extends ResolversParentTypes['UploadCSV'] = ResolversParentTypes['UploadCSV']> = {
-  data?: Resolver<Maybe<Array<ResolversTypes['FacilityData']>>, ParentType, ContextType>;
+  data?: Resolver<Array<ResolversTypes['FacilityData']>, ParentType, ContextType>;
   fileName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -345,7 +347,7 @@ export type FacilityDataDbObject = {
 };
 
 export type UploadCsvDbObject = {
-  data?: Maybe<Array<FacilityDataDbObject>>,
+  data: Array<FacilityDataDbObject>,
   fileName: string,
   _id: ObjectId,
 };

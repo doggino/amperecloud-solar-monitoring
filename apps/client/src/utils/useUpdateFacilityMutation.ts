@@ -1,11 +1,9 @@
 import { gql, useMutation } from '@apollo/client';
-import { FACILITY_FRAGMENT, MyFacility } from './useFacilityFragment';
+import { MyFacility } from './useFacilityFragment';
 
 const UPDATE_FACILITY_MUTATION = gql`
-  ${FACILITY_FRAGMENT}
   mutation UpdateFacility($id: String!, $name: String!) {
     updateFacility(id: $id, name: $name) {
-      id
       ...Facility
     }
   }

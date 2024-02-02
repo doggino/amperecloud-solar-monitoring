@@ -2,7 +2,7 @@ import React, { useEffect, useContext } from 'react';
 import { Box, Button, Grid, TextField, Typography } from '@mui/material';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { gql, useMutation } from '@apollo/client';
-import { UserWithToken } from 'apps/__generated__/graphql';
+import { UserWithToken } from '../../../__generated__/graphql';
 import { AuthContext } from './Layout';
 import { useNavigate } from 'react-router-dom';
 

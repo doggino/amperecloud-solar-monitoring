@@ -6,6 +6,8 @@ import {
   concat,
 } from '@apollo/client';
 import { graphqlURL } from './config';
+import { createFragmentRegistry } from '@apollo/client/cache';
+import { FACILITY_FRAGMENT } from './utils';
 
 const httpLink = new HttpLink({
   uri: graphqlURL,
@@ -23,7 +25,9 @@ const authMiddleware = new ApolloLink((operation, forward) => {
 });
 
 const client = new ApolloClient({
-  cache: new InMemoryCache(),
+  cache: new InMemoryCache({
+    fragments: createFragmentRegistry(FACILITY_FRAGMENT),
+  }),
   link: concat(authMiddleware, httpLink),
 });
 

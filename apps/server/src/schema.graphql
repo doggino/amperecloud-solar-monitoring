@@ -13,7 +13,7 @@ type FacilityData @entity(embedded: true) {
 type UploadCSV @entity {
   id: String! @id
   fileName: String! @column
-  data: [FacilityData!] @embedded
+  data: [FacilityData!]! @embedded
 }
 
 type Facility @entity {
@@ -42,4 +42,9 @@ type Mutation {
   createFacility(name: String!): Facility
   updateFacility(id: String!, name: String!): Facility
   deleteFacility(id: String!): Boolean
+}
+
+schema {
+  query: Query
+  mutation: Mutation
 }

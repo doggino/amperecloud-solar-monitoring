@@ -3,13 +3,11 @@ import {
   GET_FACILITIES_QUERY,
   GetFacilitiesQueryResponse,
 } from '../components/FacilityList';
-import { FACILITY_FRAGMENT, MyFacility } from './useFacilityFragment';
+import { MyFacility } from './useFacilityFragment';
 
 const CREATE_FACILITY_MUTATION = gql`
-  ${FACILITY_FRAGMENT}
   mutation CreateFacility($name: String!) {
     createFacility(name: $name) {
-      id
       ...Facility
     }
   }

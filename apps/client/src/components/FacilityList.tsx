@@ -1,16 +1,14 @@
 import React from 'react';
 import { gql, useSuspenseQuery } from '@apollo/client';
 import FacilityItem from './FacilityItem';
-import { Card, CardContent, List } from '@mui/material';
-import { FACILITY_FRAGMENT, MyFacility } from '../utils';
+import { Card, CardContent, CircularProgress, List } from '@mui/material';
+import { MyFacility } from '../utils';
 import { useCreateFacilityMutation } from '../utils/useCreateFacilityMutation';
 import FacilityForm, { FacilityFormInput } from './FacilityForm';
 
 export const GET_FACILITIES_QUERY = gql`
-  ${FACILITY_FRAGMENT}
   query GetFacilities {
     facilities {
-      id
       ...Facility @nonreactive
     }
   }
@@ -21,7 +19,7 @@ export interface GetFacilitiesQueryResponse {
 }
 
 const FacilityList: React.FC = () => {
-  const { data } = useSuspenseQuery<GetFacilitiesQueryResponse>(
+  const { data, error } = useSuspenseQuery<GetFacilitiesQueryResponse>(
     GET_FACILITIES_QUERY,
     {
       errorPolicy: 'ignore',
@@ -32,6 +30,10 @@ const FacilityList: React.FC = () => {
   const handleCreate = async (input: FacilityFormInput) => {
     await createFacility(input.name);
   };
+
+  if (error) return <></>;
+
+  if (!data?.facilities) return <CircularProgress />;
 
   return (
     <Card variant="outlined">
